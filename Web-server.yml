@@ -1,0 +1,18 @@
+- hosts: all
+  tasks:
+  - name: "Install web server package"
+    package:
+      name: "httpd"
+      state: present
+  - copy:
+      dest: "/var/www/html"
+      src: "/website.html"
+  - service:
+      name: "httpd"
+      state: started
+      enabled: yes
+  - firewalld:
+      immediate: yes
+      port: "80/tcp"
+      state: enabled
+      permanent: yes

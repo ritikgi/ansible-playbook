@@ -1,0 +1,39 @@
+- hosts: all
+  tasks:
+    - name: Docker repo
+      yum_repository:
+        name: docker
+        description: repo for docker
+        baseurl: "https://download.docker.com/linux/centos/7/x86_64/stable/"
+        gpgcheck: no
+
+
+    - name: installing docker
+      command: "yum install docker-ce --nobest -y"
+
+    - name: install python 3.6 
+      package: 
+          name: python36
+          state: present
+    - name: starting and enabling docker services
+      service:
+          name: docker
+          state: started
+          enabled: yes
+    - name: configure pip for docker
+      pip:
+          name: docker-py
+    - name: pull httpds docker iso
+      docker_image:
+        name: httpd
+        source: pull
+    - name: docker container
+      docker_container:
+          name: mywebserver
+          image: httpd
+          exposed_ports:
+            - 80
+          ports: 
+            -  4444:80
+          volumes:
+          - /var/www/html/:/usr/local/apache2/htdocs
